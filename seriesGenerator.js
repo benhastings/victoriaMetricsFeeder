@@ -5,7 +5,7 @@ const got = require("got");
 const vmHost = process.argv[2];
 const obsLength = +process.argv[3];
 
-const startDT = Math.floor(Date.now() / 5000) * 5000 - 86400000;
+const startDT = Math.floor(Date.now() / 1000) * 1000 - obsLength * 1000;
 
 const returnString = (le, valueArray, timeStampArray) => {
   return `{"metric":{"__name__":"latency_seconds","env":"perf","app":"testing","le":"${le}"},"values":[${valueArray}],"timestamps":[${timeStampArray}]}`;
@@ -17,13 +17,16 @@ const getRandomInt = (min, max) => {
 
 const fakeArrayEntries = (input) => {
   const signValue = Math.round(Math.random());
-  const nextIncrement = getRandomInt(input * 0.05, input * 0.1);
+  const nextIncrement = getRandomInt(
+    Math.round(input * 0.05),
+    Math.round(input * 0.1) + 1
+  );
   const nextEntry =
     signValue === 1 ? input + nextIncrement : input - nextIncrement;
   return nextEntry;
 };
 
-let value = getRandomInt(0, 300);
+let value = getRandomInt(0, 10);
 let jsonl = "";
 buckets.forEach((element, idx) => {
   // console.log("forEach idx:", idx);
@@ -31,17 +34,19 @@ buckets.forEach((element, idx) => {
   const timeStampArray = [startDT];
   if (idx === 0) {
     value = value;
-  } else if (idx % 5 === 0) {
-    value = value + getRandomInt(900, 1000);
+  } else if (idx % 12 === 0) {
+    value = value + getRandomInt(1000, 1010);
+  } else if (element === "+Inf") {
+    true;
   } else {
-    value = value + getRandomInt(5, 10);
+    value = value + getRandomInt(0, 5);
   }
 
   valueArray.push(value);
   if (obsLength > 0) {
     while (valueArray.length <= obsLength) {
       valueArray.push(fakeArrayEntries(value));
-      timeStampArray.push(timeStampArray[timeStampArray.length - 1] + 5000);
+      timeStampArray.push(timeStampArray[timeStampArray.length - 1] + 1000);
     }
   }
 
@@ -59,7 +64,7 @@ console.log(
   const { body } = await got.post(`http://${vmHost}/api/v1/import`, {
     body: jsonl,
   });
-  console.log("responseBody:\n", body);
+  console.log("responseBody:\n", body, "\nTimings", body.timings);
 })();
 //  Test response
 // curl -G 'http://localhost:8428/api/v1/export' -d 'match={__name__=~"latency_.*"}'
