@@ -8,7 +8,7 @@ const obsLength = +process.argv[3];
 const startDT = Math.floor(Date.now() / 5000) * 5000 - 86400000;
 
 const returnString = (le, valueArray, timeStampArray) => {
-  return `{"metric":{"__name__":"latency_secondsValue","env":"perf","app":"testing","le":"${le}"},"values":[${valueArray}],"timestamps":[${timeStampArray}]}`;
+  return `{"metric":{"__name__":"latency_seconds","env":"perf","app":"testing","le":"${le}"},"values":[${valueArray}],"timestamps":[${timeStampArray}]}`;
 };
 
 const getRandomInt = (min, max) => {
