@@ -8,7 +8,6 @@ const obsLength = +process.argv[3];
 const startDT = Math.floor(Date.now() / 5000) * 5000 - 86400000;
 
 const returnString = (le, valueArray, timeStampArray) => {
-  console.log(entries);
   return `{"metric":{"__name__":"latency_secondsValue","env":"perf","app":"testing","le":"${le}"},"values":[${valueArray}],"timestamps":[${timeStampArray}]}`;
 };
 
@@ -29,7 +28,7 @@ let jsonl = "";
 buckets.forEach((element, idx) => {
   // console.log("forEach idx:", idx);
   const valueArray = [];
-  const timeStampArray = [startDT]
+  const timeStampArray = [startDT];
   if (idx === 0) {
     value = value;
   } else if (idx % 5 === 0) {
@@ -38,23 +37,29 @@ buckets.forEach((element, idx) => {
     value = value + getRandomInt(5, 10);
   }
 
-  valueArray.push(value)
-  if obsLength > 0 {
+  valueArray.push(value);
+  if (obsLength > 0) {
     while (valueArray.length <= obsLength) {
-      valueArray.push(fakeArrayEntries(value))
-      timeStampArray.push(timeStampArray[timeStampArray.length-1]+5000);
+      valueArray.push(fakeArrayEntries(value));
+      timeStampArray.push(timeStampArray[timeStampArray.length - 1] + 5000);
     }
   }
 
   jsonl += returnString(element, valueArray, timeStampArray) + "\n";
 });
 // form.append()
-console.log("\nlength of metrics to send: ", jsonl.length,"\n",jsonl.substring(jsonl.length-300,jsonl.length));
+console.log(
+  "\nlength of metrics to send: ",
+  jsonl.length,
+  "\n",
+  jsonl.substring(jsonl.length - 300, jsonl.length)
+);
 
-(async()=>{ const {body} = await got.post(`http://${vmHost}/api/v1/import`, {
-  body: jsonl,
-});
-console.log('responseBody:\n',body)
+(async () => {
+  const { body } = await got.post(`http://${vmHost}/api/v1/import`, {
+    body: jsonl,
+  });
+  console.log("responseBody:\n", body);
 })();
 //  Test response
 // curl -G 'http://localhost:8428/api/v1/export' -d 'match={__name__=~"latency_.*"}'
