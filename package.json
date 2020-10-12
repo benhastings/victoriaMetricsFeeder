@@ -1,0 +1,15 @@
+{
+  "name": "victoriametricstests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "seriesGenerator.js",
+  "dependencies": {
+    "got": "^11.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ben Hastings (ben.hastings@gmail.com)",
+  "license": "ISC"
+}
