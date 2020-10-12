@@ -1,9 +1,9 @@
 const bucketArray = require("./bucketArray");
 const buckets = bucketArray.bucketArray;
 const got = require("got");
-// const FormData = require('form-data');
 
-// const form=new FormData();
+const vmHost = process.argv[2];
+const obsLength = +process.argv[3];
 
 const startDT = Math.floor(Date.now() / 5000) * 5000 - 86400000;
 
