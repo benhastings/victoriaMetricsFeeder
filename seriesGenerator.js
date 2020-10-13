@@ -1,9 +1,15 @@
+// -------------------------------
+// Example Usage
+// -------------------------------
+//  node seriesGenerator.js localhost:8428 30 random
+
 const bucketArray = require("./bucketArray");
 const buckets = bucketArray.bucketArray;
 const got = require("got");
 
 const vmHost = process.argv[2];
 const obsLength = +process.argv[3];
+const setting = process.argv[4];
 
 const startDT = Math.floor(Date.now() / 1000) * 1000 - obsLength * 1000;
 
@@ -16,17 +22,20 @@ const getRandomInt = (min, max) => {
 };
 
 const fakeArrayEntries = (input) => {
-  const signValue = Math.round(Math.random());
-  const nextIncrement = getRandomInt(
-    Math.round(input * 0.05),
-    Math.round(input * 0.1) + 1
-  );
-  const nextEntry =
-    signValue === 1 ? input + nextIncrement : input - nextIncrement;
+  let nextEntry = input;
+  if (setting !== "fixed") {
+    const signValue = Math.round(Math.random());
+    const nextIncrement = getRandomInt(
+      Math.round(input * 0.05),
+      Math.round(input * 0.1) + 1
+    );
+    nextEntry = signValue === 1 ? input + nextIncrement : input - nextIncrement;
+  }
   return nextEntry;
 };
 
 let value = getRandomInt(0, 10);
+value = 10;
 let jsonl = "";
 buckets.forEach((element, idx) => {
   // console.log("forEach idx:", idx);
@@ -34,7 +43,9 @@ buckets.forEach((element, idx) => {
   const timeStampArray = [startDT];
   if (idx === 0) {
     value = value;
-  } else if (idx % 12 === 0) {
+  } else if (idx % 11 === 0) {
+    value = value + getRandomInt(1000, 1010);
+  } else if (idx % 3 === 0) {
     value = value + getRandomInt(1000, 1010);
   } else if (element === "+Inf") {
     true;
@@ -57,7 +68,8 @@ console.log(
   "\nlength of metrics to send: ",
   jsonl.length,
   "\n",
-  jsonl.substring(jsonl.length - 300, jsonl.length)
+  // jsonl.substring(jsonl.length - 300, jsonl.length)
+  jsonl
 );
 
 (async () => {
