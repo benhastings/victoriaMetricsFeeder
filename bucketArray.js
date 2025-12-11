@@ -114,3 +114,17 @@ const bucketArray = [
 ];
 
 exports.bucketArray = bucketArray;
+
+// arr=[];value = 1; for (let i=1; i<=45; i++) {
+//   value = value * 1.25; arr.push(Math.round(value));
+//   console.log(i, '\t', Math.round(value));
+// }
+//----------------------
+//  sparse approximation up to just under 10s in ms
+// [
+//      2,    4,    7,    9,   12,   15,   18,
+//     23,   28,   36,   44,   56,   69,   87,
+//    108,  136,  169,  212,  265,  331,  414,
+//    517,  646,  808, 1010, 1262, 1578, 1972,
+//   2465, 3081, 3852, 4815, 6019, 7523, 9404
+// ]
